@@ -5,7 +5,15 @@
 
 trigger:
 - master
-- task: Maven
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- script: echo Hello, world!
+  displayName: 'Run a one-line script'
+
+- task: Maven@3
   inputs:
     mavenPomFile: '**/SecondRepo/FirstSpringProjects/pom.xml'
     publishJUnitResults: false
@@ -14,12 +22,6 @@ trigger:
     mavenAuthenticateFeed: false
     effectivePomSkip: false
     sonarQubeRunAnalysis: false
-pool:
-  vmImage: 'ubuntu-latest'
-
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
 
 - script: |
     echo Add other tasks to build, test, and deploy your project.
