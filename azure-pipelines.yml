@@ -15,7 +15,7 @@ steps:
 
 - task: Maven@3
   inputs:
-    mavenPomFile: '**/SecondRepo/FirstSpringProjects/pom.xml'
+    mavenPomFile: '**/FirstSpringProjects/pom.xml'
     publishJUnitResults: false
     javaHomeOption: 'JDKVersion'
     mavenVersionOption: 'Default'
