@@ -1,7 +1,7 @@
 # Starter pipeline
 - task: Maven@3
   inputs:
-    mavenPomFile: '/FirstSpringProjects/pom.xml'
+    mavenPomFile: 'pom.xml'
     publishJUnitResults: true
     testResultsFiles: '**/surefire-reports/TEST-*.xml'
     javaHomeOption: 'JDKVersion'
