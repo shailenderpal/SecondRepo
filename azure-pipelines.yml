@@ -2,8 +2,6 @@
 - task: Maven@3
   inputs:
     mavenPomFile: '**/FirstSpringProjects/pom.xml'
-    publishJUnitResults: true
-    testResultsFiles: '**/surefire-reports/TEST-*.xml'
     javaHomeOption: 'JDKVersion'
     mavenVersionOption: 'Default'
     mavenAuthenticateFeed: false
