@@ -47,6 +47,7 @@ steps:
   inputs:
     PathtoPublish: '$(build.artifactstagingdirectory)'
   condition: succeededOrFailed()
+ 
 
 - script: |
     echo Add other tasks to build, test, and deploy your project.
