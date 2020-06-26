@@ -16,7 +16,8 @@ stages:
   - stage: Build
     jobs:
       - job: Build
-        pool: myagents
+        pool:
+          vmImage: 'ubuntu-latest'
 
         steps:
         - script: echo Hello, world!
@@ -52,7 +53,8 @@ stages:
   - stage: Deploy
     jobs:
       - job: Deploy
-        pool: myagents
+        pool:
+          vmImage: 'ubuntu-latest'
         steps:
           - task: DownloadBuildArtifacts@0
             inputs:
