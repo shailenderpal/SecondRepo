@@ -49,8 +49,6 @@ stages:
           inputs:
             PathtoPublish: '$(build.artifactstagingdirectory)'
           condition: succeededOrFailed()
-         - debug:
-            msg: publish build artifact path {{ build.artifactstagingdirectory }}
   - stage: Deploy
     jobs:
       - job: Deploy
@@ -62,8 +60,7 @@ stages:
               downloadType: single
               artifactName: drop
               downloadPath: $(Build.artifactstagingdirectory)
-          - debug:
-              msg: i'm inside deploy and it executed successfully.
+          
 #           - task: AzureRmWebAppDeployment@4
 #             inputs:
 #               ConnectionType: AzureRM
