@@ -63,6 +63,12 @@ stages:
               artifactName: drop
               downloadPath: $(Build.artifactstagingdirectory)
           
+          - task: Bash@3
+            displayName: 'execute my jar file'
+            inputs:
+              targetType: filePath
+              filePath: '$(System.DefaultWorkingDirectory)/_spring-project-self-agent/drop/${{ parameters.Projectname }}/target/FirstSpringProject-0.0.1-SNAPSHOT.jar'
+
 #           - task: AzureRmWebAppDeployment@4
 #             inputs:
 #               ConnectionType: AzureRM
