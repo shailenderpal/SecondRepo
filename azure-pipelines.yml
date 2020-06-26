@@ -12,44 +12,60 @@ parameters:
 
 trigger:
 - master
+stages:
+  - stage: Build
+    jobs:
+      - job: Build
+        pool: myagents
 
-pool:
-  vmImage: 'ubuntu-latest'
+        steps:
+        - script: echo Hello, world!
+          displayName: 'Run a one-line script'
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
-
-- task: Maven@3
-  displayName: 'Maven FirstSpringProjects/pom.xml'
-  inputs:
-    #mavenPomFile: '**/${{ parameters.Projectname }}/pom.xml'
-    mavenPomFile: '${{ parameters.Projectname }}/pom.xml'
-    publishJUnitResults: false
-    javaHomeOption: 'JDKVersion'
-    mavenVersionOption: 'Default'
-    mavenAuthenticateFeed: false
-    effectivePomSkip: false
-    sonarQubeRunAnalysis: false
-    goals: clean
+        - task: Maven@3
+          displayName: 'Maven FirstSpringProjects/pom.xml'
+          inputs:
+            #mavenPomFile: '**/${{ parameters.Projectname }}/pom.xml'
+            mavenPomFile: '${{ parameters.Projectname }}/pom.xml'
+            publishJUnitResults: false
+            javaHomeOption: 'JDKVersion'
+            mavenVersionOption: 'Default'
+            mavenAuthenticateFeed: false
+            effectivePomSkip: false
+            sonarQubeRunAnalysis: false
+            goals: package
 
 
-- task: CopyFiles@2
-  displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
-  inputs:
-    SourceFolder: '$(system.defaultworkingdirectory)'
-    Contents: '**/*.jar'
-    TargetFolder: '$(build.artifactstagingdirectory)'
-  condition: succeededOrFailed()
+        - task: CopyFiles@2
+          displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
+          inputs:
+            SourceFolder: '$(system.defaultworkingdirectory)'
+            Contents: '**/*.jar'
+            TargetFolder: '$(build.artifactstagingdirectory)'
+          condition: succeededOrFailed()
 
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact: drop'
-  inputs:
-    PathtoPublish: '$(build.artifactstagingdirectory)'
-  condition: succeededOrFailed()
- 
-
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+        - task: PublishBuildArtifacts@1
+          displayName: 'Publish Artifact: drop'
+          inputs:
+            PathtoPublish: '$(build.artifactstagingdirectory)'
+          condition: succeededOrFailed()
+          msg: publish build artifact path {{ build.artifactstagingdirectory }}
+  - stage: Deploy
+    jobs:
+      - job: Deploy
+        pool: myagents
+        steps:
+          - task: DownloadBuildArtifacts@0
+            inputs:
+              buildType: current
+              downloadType: single
+              artifactName: drop
+              downloadPath: $(Build.artifactstagingdirectory)
+              msg: i'm inside deploy and it executed successfully.
+#           - task: AzureRmWebAppDeployment@4
+#             inputs:
+#               ConnectionType: AzureRM
+#               azureSubscription: Azure Pass – Sponsorship(5be1136e-9afb-4c43-ba55-1940e4789933)
+#               appType: webApp
+#               WebAppName: my-web-app-26june
+#               packageForLinux: $(System.DefaultWorkingDirectory)/drop/*.zip
