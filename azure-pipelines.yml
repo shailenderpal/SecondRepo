@@ -20,9 +20,6 @@ stages:
           vmImage: 'ubuntu-latest'
 
         steps:
-        - script: echo Hello, world!
-          displayName: 'Run a one-line script'
-
         - task: Maven@3
           displayName: 'Maven FirstSpringProjects/pom.xml'
           inputs:
@@ -60,7 +57,7 @@ stages:
             inputs:
               buildType: current
               downloadType: single
-              artifactName: drop
+              artifactName: 'Publish Artifact: drop'
               downloadPath: $(Build.artifactstagingdirectory)
           
           - task: Bash@3
