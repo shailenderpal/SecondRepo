@@ -59,8 +59,8 @@ stages:
     #dependsOn: 'Bundle_Default_Data'
     condition: succeeded()
     jobs:
-    - deployment: Web_Api
-      displayName: 'Web Api'
+    - deployment: Web_Jars
+      displayName: 'Web Jars'
       pool: 'DEV-WEB'
       environment: 'dev-web'
       strategy:
