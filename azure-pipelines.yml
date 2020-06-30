@@ -1,15 +1,17 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
+# Maven
+# Build your Java project and run tests with Apache Maven.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/java
 parameters:
 - name: Projectname
   type: string
-  default: SecondSpringProject
+  default: fpp-reader-app-app
   values:
-  - FirstSpringProjects
-  - SecondSpringProject
-
+  - fpp-reader-app-app
+  - fpp-reader-app
+  - fpp-reader-app-apmp
+  - fpp-reader-app-cop
+  
 trigger:
 - master
 stages:
@@ -18,58 +20,65 @@ stages:
       - job: Build
         pool:
           vmImage: 'ubuntu-latest'
-
+          name: Azure Pipelines
+          demands: maven
+        
         steps:
-        - task: Maven@3
-          displayName: 'Maven FirstSpringProjects/pom.xml'
-          inputs:
-            #mavenPomFile: '**/${{ parameters.Projectname }}/pom.xml'
-            mavenPomFile: '${{ parameters.Projectname }}/pom.xml'
-            publishJUnitResults: false
-            javaHomeOption: 'JDKVersion'
-            mavenVersionOption: 'Default'
-            mavenAuthenticateFeed: false
-            effectivePomSkip: false
-            sonarQubeRunAnalysis: false
-            goals: package
-
-
-        - task: CopyFiles@2
-          displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
-          inputs:
-            SourceFolder: '$(system.defaultworkingdirectory)'
-            Contents: '**/*.jar'
-            TargetFolder: '$(build.artifactstagingdirectory)'
-          condition: succeededOrFailed()
-
-        - task: PublishBuildArtifacts@1
-          displayName: 'Publish Artifact: drop'
-          inputs:
-            PathtoPublish: '$(build.artifactstagingdirectory)'
-          condition: succeededOrFailed()
-  - stage: Deploy
+          - task: Maven@3
+            displayName: 'Maven fpp-reader-app-app/pom.xml'
+            inputs:
+              mavenPomFile: '${{ parameters.Projectname }}/pom.xml'
+              publishJUnitResults: false
+              javaHomeOption: 'JDKVersion'
+              mavenVersionOption: 'Default'
+              mavenAuthenticateFeed: false
+              effectivePomSkip: false
+              sonarQubeRunAnalysis: false
+              goals: clean
+          - task: CopyFiles@2
+            displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
+            inputs:
+              SourceFolder: '$(system.defaultworkingdirectory)'
+              Contents: '**/*.jar'
+              TargetFolder: '$(build.artifactstagingdirectory)'
+            condition: succeededOrFailed()
+          - task: PublishBuildArtifacts@1
+            displayName: 'Publish Artifact: drop'
+            inputs:
+              PathtoPublish: '$(build.artifactstagingdirectory)'
+            condition: succeededOrFailed()
+  - stage: DeployDev
+    displayName: 'Deploy DEV'
+    #dependsOn: 'Bundle_Default_Data'
+    condition: succeeded()
     jobs:
-      - job: Deploy
-        pool:
-          vmImage: 'ubuntu-latest'
-        steps:
-          - task: DownloadBuildArtifacts@0
-            inputs:
-              buildType: current
-              downloadType: single
-              artifactName: 'Publish Artifact: drop'
-              downloadPath: $(Build.artifactstagingdirectory)
-          
-          - task: Bash@3
-            displayName: 'execute my jar file'
-            inputs:
-              targetType: filePath
-              filePath: '$(Build.artifactstagingdirectory)/_spring-project-self-agent/drop/${{ parameters.Projectname }}/target/FirstSpringProject-0.0.1-SNAPSHOT.jar'
+    - deployment: Web_Api
+      displayName: 'Web Api'
+      pool: 'DEV-WEB'
+      environment: 'dev-web'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - task: DownloadBuildArtifacts@0
+              inputs:
+                buildType: current
+                downloadType: single
+                artifactName: 'Publish Artifact: drop'
+                downloadPath: $(Build.artifactstagingdirectory)
 
-#           - task: AzureRmWebAppDeployment@4
-#             inputs:
-#               ConnectionType: AzureRM
-#               azureSubscription: Azure Pass – Sponsorship(5be1136e-9afb-4c43-ba55-1940e4789933)
-#               appType: webApp
-#               WebAppName: my-web-app-26june
-#               packageForLinux: $(System.DefaultWorkingDirectory)/drop/*.zip
+            - bash: |
+                echo "##########Copying the jar file to a VM#################"
+                echo "current directory is "
+                pwd
+                cd /home/kumar.sk.16/azagent/azagent/azagent/_work/r1/a/_SpecAnywhereApp-Maven-CI-es/drop/${{ parameters.Projectname }}/target
+                
+                echo "current directory after the cd "
+                pwd
+                cp ${{ parameters.Projectname }}-0.0.1-SNAPSHOT.jar /home/kumar.sk.16/api_jars
+                echo "jar is copied successfully.. "
+                cd /home/kumar.sk.16/api_jars
+                
+                echo "current directory after copy and change directory"
+                pwd
+              displayName: 'Execute Deploy Script'
