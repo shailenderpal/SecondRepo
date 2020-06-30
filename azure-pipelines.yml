@@ -71,11 +71,12 @@ stages:
                 echo "##########Copying the jar file to a VM#################"
                 echo "current directory is "
                 pwd
-                cd /home/kumar.sk.16/azagent/azagent/azagent/_work/r1/a/_SpecAnywhereApp-Maven-CI-es/drop/${{ parameters.Projectname }}/target
-                
+                #cd /home/kumar.sk.16/azagent/azagent/azagent/_work/r1/a/_SpecAnywhereApp-Maven-CI-es/drop/${{ parameters.Projectname }}/target
+                cd $(Build.artifactstagingdirectory)/_spring-project-self-agent/drop/${{ parameters.Projectname }}/target
                 echo "current directory after the cd "
                 pwd
-                cp ${{ parameters.Projectname }}-0.0.1-SNAPSHOT.jar /home/kumar.sk.16/api_jars
+                #cp ${{ parameters.Projectname }}-0.0.1-SNAPSHOT.jar /home/kumar.sk.16/api_jars
+                cp ${{ parameters.Projectname }}-0.0.1-SNAPSHOT.jar /home/AzureUser/api_jars
                 echo "jar is copied successfully.. "
                 cd /home/kumar.sk.16/api_jars
                 
