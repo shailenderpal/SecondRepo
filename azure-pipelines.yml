@@ -2,15 +2,22 @@
 # Build your Java project and run tests with Apache Maven.
 # Add steps that analyze code, save build artifacts, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/java
+# parameters:
+# - name: Projectname
+#   type: string
+#   default: fpp-reader-app-app
+#   values:
+#   - fpp-reader-app-app
+#   - fpp-reader-app
+#   - fpp-reader-app-apmp
+#   - fpp-reader-app-cop
 parameters:
 - name: Projectname
   type: string
-  default: fpp-reader-app-app
+  default: SecondSpringProject
   values:
-  - fpp-reader-app-app
-  - fpp-reader-app
-  - fpp-reader-app-apmp
-  - fpp-reader-app-cop
+  - FirstSpringProjects
+  - SecondSpringProject
   
 trigger:
 - master
@@ -25,7 +32,7 @@ stages:
         
         steps:
           - task: Maven@3
-            displayName: 'Maven fpp-reader-app-app/pom.xml'
+            displayName: 'Maven FirstSpringProjects/pom.xml'
             inputs:
               mavenPomFile: '${{ parameters.Projectname }}/pom.xml'
               publishJUnitResults: false
@@ -34,7 +41,7 @@ stages:
               mavenAuthenticateFeed: false
               effectivePomSkip: false
               sonarQubeRunAnalysis: false
-              goals: clean
+              goals: clean package
           - task: CopyFiles@2
             displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
             inputs:
