@@ -61,7 +61,7 @@ stages:
     jobs:
     - deployment: Web_Jars
       displayName: 'Web Jars'
-      pool: 'DEV-WEB'
+      pool: 'infyPOc-AzureUserVM'
       environment: 'dev-web'
       strategy:
         runOnce:
